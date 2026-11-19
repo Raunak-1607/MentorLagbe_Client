@@ -13,22 +13,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { authClient } from "@/lib/auth-client";
 import type { CreateTuition } from "@/types/tuition";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function PostTuitionPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data: session } = authClient.useSession();
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!session?.user) {
-      toast.danger("Please sign in as a tutor first.");
-      return;
-    }
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -42,13 +32,11 @@ export default function PostTuitionPage() {
       daysPerWeek: Number(formData.get("daysPerWeek")),
       bannerImage: String(formData.get("bannerImage") || ""),
       description: String(formData.get("description")),
-      tutorName: session.user.name,
-      tutorEmail: session.user.email,
     };
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${API_URL}/tuitions`, {
+      const response = await fetch("/api/tuitions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(tuition),
@@ -58,10 +46,11 @@ export default function PostTuitionPage() {
 
       toast.success("Tuition submitted for admin approval.");
       form.reset();
-    } catch (error) {
-      toast.danger(error instanceof Error ? error.message : "Could not submit tuition.");
+    } catch {
+      toast.danger("Could not submit tuition.");
     } finally {
       setIsSubmitting(false);
+
     }
   };
 

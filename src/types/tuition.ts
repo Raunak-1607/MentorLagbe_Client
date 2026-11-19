@@ -1,5 +1,6 @@
 export type Tuition = {
-  id: string;
+  
+  tutorId: string;
   title: string;
   subject: string;
   classLevel: string;
@@ -19,5 +20,5 @@ export type Tuition = {
 // The tutor fills this data. The server creates the remaining fields.
 export type CreateTuition = Omit<
   Tuition,
-  "id" | "approvalStatus" | "isActive" | "createdAt"
+  "id" | "tutorId" | "tutorName" | "tutorEmail" | "approvalStatus" | "isActive" | "createdAt"
 >;

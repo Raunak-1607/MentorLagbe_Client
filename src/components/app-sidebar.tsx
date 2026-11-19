@@ -123,7 +123,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t p-5 group-data-[collapsible=icon]:p-2">
+      <SidebarFooter className="border-t p-5 group-data-[collapsible=icon]:p-2 mb-4">
         <div className="flex items-center gap-3">
           <Avatar className="size-9">
             <AvatarImage src={user?.image || undefined} alt={user?.name || "User"} />
