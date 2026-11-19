@@ -1,6 +1,8 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "@heroui/react/toast";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -12,6 +14,16 @@ const navLinks = [
 const Navbar = () => {
   const { data: session } = authClient.useSession();
   const user = session?.user;
+
+  const handleSignOut = async () => {
+    const { error } = await authClient.signOut();
+    if (error) {
+      toast.danger(error.message || "Unable to sign out.");
+      return;
+    }
+
+    toast.success("Signed out successfully.");
+  };
   return (
     <nav className="mx-9 mt-5 flex items-center justify-between rounded-2xl  bg-white px-10 py-4 container mx-auto">
       {/* Logo */}
@@ -39,11 +51,22 @@ const Navbar = () => {
       {/* Authentication Buttons */}
 
       {user ? (
-        <div className="flex flex-col items-end leading-tight text-center">
-          <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-          <p className="text-xs font-medium text-indigo-600 capitalize rounded-2xl bg-indigo-200 px-2 py-0.5">
-            {user.role}
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end leading-tight">
+            <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+
+            <p className="text-xs font-medium text-indigo-600 capitalize rounded-full bg-indigo-100 px-2 py-0.5">
+              {user.role}
+            </p>
+          </div>
+
+          <Button
+            onClick={handleSignOut}
+            variant="outline"
+            className="rounded-xl border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            Sign out
+          </Button>
         </div>
       ) : (
         <div className="flex items-center gap-3">
