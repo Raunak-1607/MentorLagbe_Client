@@ -1,9 +1,29 @@
+
+"use client"
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { auth } from "@/lib/auth";
+import { signIn } from "@/lib/auth-client";
 
 export default function SignInPage() {
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const user = Object.fromEntries(formData.entries());
+
+    const { data, error } = await signIn.email({
+      email: user.email as string,
+      password: user.password as string,
+    });
+
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    
+  };
   return (
     <main className="flex flex-1 items-center justify-center bg-[#f0f1ff] px-5 py-12 sm:px-8">
       <section className="w-full max-w-md rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm sm:p-9">
@@ -17,9 +37,12 @@ export default function SignInPage() {
           Continue your learning journey with your account.
         </p>
 
-        <form className="mt-8 space-y-5">
+        <form className="mt-8 space-y-5" onSubmit={handleSignIn}>
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-slate-900">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-slate-900"
+            >
               Email
             </label>
             <Input
@@ -33,7 +56,10 @@ export default function SignInPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-slate-900">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-slate-900"
+            >
               Password
             </label>
             <Input
@@ -46,7 +72,8 @@ export default function SignInPage() {
             />
           </div>
 
-          <Button className="h-12 w-full rounded-xl bg-indigo-700 text-base hover:bg-indigo-800">
+          <Button className="h-12 w-full rounded-xl bg-indigo-700 text-base hover:bg-indigo-800" type="submit">
+            
             Sign in
           </Button>
         </form>
@@ -70,7 +97,10 @@ export default function SignInPage() {
 
         <p className="mt-7 text-center text-sm text-slate-600">
           New here?{" "}
-          <Link href="/SignUp" className="font-semibold text-indigo-700 hover:underline">
+          <Link
+            href="/SignUp"
+            className="font-semibold text-indigo-700 hover:underline"
+          >
             Create an account
           </Link>
         </p>
