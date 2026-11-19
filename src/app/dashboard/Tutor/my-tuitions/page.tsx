@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
-import { MyTuitionCard } from "@/components/my-tuition-card";
+import { MyTuitionCard, MyTuitionCardProps } from "@/components/my-tuition-card";
 import { auth, db } from "@/lib/auth";
 import type { Tuition } from "@/types/tuition";
 
@@ -40,7 +40,7 @@ export default async function MyTuitionsPage() {
             </tr>
           </thead>
           <tbody>
-            {tuitions.map((tuition,index) => (
+            {tuitions.map((tuition : MyTuitionCardProps ,index:number) => (
               <MyTuitionCard key={index} {...tuition} />
             ))}
           </tbody>
