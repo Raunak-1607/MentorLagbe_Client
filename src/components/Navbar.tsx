@@ -37,14 +37,14 @@ const Navbar = () => {
       {/* Authentication Buttons */}
       <div className="flex items-center gap-3">
         <Link
-          href="/login"
+          href="/SignIn"
           className="rounded-xl border border-indigo-600 px-4 py-2 text-indigo-700 hover:bg-indigo-50"
         >
           Sign in
         </Link>
 
         <Link
-          href="/register"
+          href="/SignUp"
           className="rounded-xl bg-indigo-700 px-4 py-2 text-white hover:bg-indigo-800"
         >
           Sign up
