@@ -2,16 +2,19 @@
 import { authClient } from "@/lib/auth-client";
 import { toast } from "@heroui/react/toast";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
 const navLinks = [
   { name: "Home", href: "/" },
+  { name: "Dashboard", href: "/dashboard" },
   { name: "Browse Tutorials", href: "/tutorials" },
   { name: "Pricing", href: "/pricing" },
   { name: "How It Works", href: "/how-it-works" },
 ];
 
 const Navbar = () => {
+  const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
@@ -41,7 +44,11 @@ const Navbar = () => {
           <Link
             key={link.name}
             href={link.href}
-            className="text-gray-700 transition hover:text-indigo-700"
+            className={
+              pathname === link.href
+                ? "font-semibold text-indigo-700"
+                : "text-gray-700 transition hover:text-indigo-700"
+            }
           >
             {link.name}
           </Link>

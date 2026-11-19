@@ -36,7 +36,7 @@ export default function SignUpPage() {
     }
       if (data) {
       toast.success("Account created successfully. Please sign in.");
-      router.push("/Auth/Login");
+      router.push("/SignIn");
     }
 
     

@@ -9,6 +9,12 @@ import { Input } from "@/components/ui/input";
 import { signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
+const dashboardPath = {
+  student: "/dashboard/student",
+  tutor: "/dashboard/Tutor",
+  admin: "/dashboard/admin",
+};
+
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
@@ -29,12 +35,15 @@ export default function SignInPage() {
       return;
     }
 
-    if (data){
-       toast.success("You have signed in successfully.");
-       router.refresh();
-       router.push("/")
-       
+    if (data) {
+      const role = data.user.role;
+      const destination =
+        role === "tutor" || role === "admin"
+          ? dashboardPath[role]
+          : dashboardPath.student;
 
+      toast.success("You have signed in successfully.");
+      router.replace(destination);
     }
 
     
