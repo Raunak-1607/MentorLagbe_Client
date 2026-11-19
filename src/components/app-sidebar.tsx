@@ -101,7 +101,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     render={<Link href={item.href} />}
                     isActive={pathname === item.href}
-                    className="h-11 px-4 text-base hover:text-indigo-600"
+                    className="h-11 px-4 text-base hover:text-indigo-600 data-active:bg-indigo-50 data-active:text-indigo-600 data-active:hover:bg-indigo-100 data-active:hover:text-indigo-700"
                   >
                     <item.icon />
                     {item.label}
