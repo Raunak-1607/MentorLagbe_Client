@@ -1,27 +1,43 @@
 
-"use client"
+"use client";
+import { useState } from "react";
 import Link from "next/link";
+import { toast } from "@heroui/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { auth } from "@/lib/auth";
 import { signIn } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
+
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const user = Object.fromEntries(formData.entries());
+    setIsLoading(true);
 
     const { data, error } = await signIn.email({
-      email: user.email as string,
-      password: user.password as string,
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
     });
 
+    setIsLoading(false);
     if (error) {
-      console.log(error.message);
+      toast.danger(error.message || "Email or password is incorrect.");
       return;
     }
+
+    if (data){
+       toast.success("You have signed in successfully.");
+       router.refresh();
+       router.push("/")
+       
+
+    }
+
+    
     
   };
   return (
@@ -72,9 +88,12 @@ export default function SignInPage() {
             />
           </div>
 
-          <Button className="h-12 w-full rounded-xl bg-indigo-700 text-base hover:bg-indigo-800" type="submit">
-            
-            Sign in
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="h-12 w-full rounded-xl bg-indigo-700 text-base hover:bg-indigo-800"
+          >
+            {isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
 

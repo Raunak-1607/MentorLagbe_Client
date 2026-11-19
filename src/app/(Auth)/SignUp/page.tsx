@@ -6,20 +6,21 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signUp } from "@/lib/auth-client";
+import { toast } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const  router = useRouter()
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const image = formData.get("imageUrl") as string;
 
-    setError("");
     setIsLoading(true);
 
-    const { error } = await signUp.email({
+    const {data, error } = await signUp.email({
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       password: formData.get("password") as string,
@@ -29,7 +30,16 @@ export default function SignUpPage() {
     });
 
     setIsLoading(false);
-    if (error) setError(error.message || "Could not create your account.");
+    if (error) {
+      toast.danger(error.message || "Could not create your account.");
+      return;
+    }
+      if (data) {
+      toast.success("Account created successfully. Please sign in.");
+      router.push("/Auth/Login");
+    }
+
+    
   };
   return (
     <main className="flex flex-1 items-center justify-center bg-[#f0f1ff] px-5 py-12 sm:px-8">
@@ -158,8 +168,6 @@ export default function SignUpPage() {
               </label>
             </div>
           </fieldset>
-
-          {error && <p className="text-sm text-red-600">{error}</p>}
 
           <Button
             type="submit"
