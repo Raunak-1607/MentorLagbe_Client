@@ -1,24 +1,18 @@
-"use client";
+import PayButton from "./components/PayButton";
 
-import React, { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+export default async function PricingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ canceled?: string }>;
+}) {
+  const { canceled } = await searchParams;
 
-export default function PricingPage() {
-  const { data: session } = authClient.useSession();
-  const [loading, setLoading] = useState(false);
-
-  // Check if current user is already Pro/Premium
-  const isPro = (session?.user as { plan?: string } | undefined)?.plan === "premium";
-
-  const handleSubscribe = async () => {
-    // Stripe integration will be added here
-    setLoading(true);
-    try {
-      console.log("Stripe checkout trigger placeholder");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (canceled) {
+    console.log(
+      "Order canceled -- continue to shop around and check out when you're ready.",
+    );
+  }
+  const isPro = false;
 
   return (
     <div className="py-2">
@@ -70,13 +64,14 @@ export default function PricingPage() {
 
           {/* Stripe Subscribe Button */}
           <div className="mt-8">
-            <button
-              onClick={handleSubscribe}
-              disabled={loading || isPro}
-              className="inline-flex items-center justify-center rounded-xl bg-[#4338ca] px-6 py-3 text-sm font-medium text-white shadow-xs transition-colors hover:bg-[#3730a3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4338ca] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
-            >
-              {isPro ? "Already Subscribed" : loading ? "Processing..." : "Subscribe with Stripe"}
-            </button>
+            <form action="/api/checkout_sessions" method="POST">
+              <section>
+                <button type="submit" role="link">
+                  <PayButton isPro={isPro} />
+                </button>
+              </section>
+            </form>
+            
           </div>
         </div>
 
@@ -95,8 +90,8 @@ export default function PricingPage() {
             </div>
 
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-gray-500">
-              You pay on Stripe Checkout. After paying you land on a success page
-              and your plan changes to Pro.
+              You pay on Stripe Checkout. After paying you land on a success
+              page and your plan changes to Pro.
             </p>
           </div>
         </div>
