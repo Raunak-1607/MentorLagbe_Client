@@ -23,6 +23,9 @@ export async function POST() {
       ],
       mode: 'payment',
       customer_email: userSession?.user.email ,
+      metadata: {
+        userId: userSession?.user.id,
+      },
       success_url: `${origin}/dashboard/Tutor/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/dashboard/Tutor/pricing?canceled=true`,
       // Provide a name (for example, hosted_web_0001) to label this Checkout integration and measure its conversion independently
