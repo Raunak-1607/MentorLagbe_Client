@@ -15,6 +15,7 @@ const dashboardTitles: Record<string, string> = {
   "/dashboard/Tutor/my-tuitions": "My tuitions",
   "/dashboard/Tutor/applicants": "Applicants",
   "/dashboard/Tutor/update-profile": "Update profile",
+  "/dashboard/Tutor/pricing": "Upgrade to Pro",
   "/dashboard/admin/users": "Users",
   "/dashboard/admin/tuition-approvals": "Tuition approvals",
   "/dashboard/admin/transactions": "Transactions",
