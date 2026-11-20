@@ -25,6 +25,11 @@ export const auth = betterAuth({
         defaultValue: "free",
         input: false,
       },
+      bio: {
+        type: "string",
+        defaultValue: " ",
+        input: false,
+      }
     },
   },
   database: mongodbAdapter(db, {

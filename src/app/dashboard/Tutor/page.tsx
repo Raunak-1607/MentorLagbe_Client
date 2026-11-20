@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
-import { auth, db } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import type { Tuition } from "@/types/tuition";
 
 export default async function TutorDashboardPage() {
@@ -9,21 +10,32 @@ export default async function TutorDashboardPage() {
     headers: await headers(),
   });
 
-  const tutorId = session?.user.role === "tutor" ? session.user.id : "";
+  // 🔒 Auth guard — redirect non-tutors immediately
+  if (!session || session.user.role !== "tutor") {
+    redirect("/");
+  }
 
-  const tuitionsPosted = tutorId
-    ? await db.collection<Tuition>("tuition").countDocuments({ tutorId })
-    : 0;
+  // Fetch this tutor's tuitions from the external backend (port 5000)
+  let tuitionsPosted = 0;
+  let activeAndApproved = 0;
 
-  const activeAndApproved = tutorId
-    ? await db.collection<Tuition>("tuition").countDocuments({
-        tutorId,
-        approvalStatus: "approved",
-        isActive: true,
-      })
-    : 0;
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tuition`, {
+      cache: "no-store",
+    });
 
-  const currentPlan = session?.user.plan === "premium" ? "Pro" : "Free";
+    if (res.ok) {
+      const tuitions: Tuition[] = await res.json();
+      tuitionsPosted = tuitions.length;
+      activeAndApproved = tuitions.filter(
+        (t) => t.approvalStatus === "approved" && t.isActive
+      ).length;
+    }
+  } catch {
+    // Backend unreachable — show zeros gracefully
+  }
+
+  const currentPlan = session.user.plan === "premium" ? "Pro" : "Free";
 
   const stats = [
     {
@@ -38,13 +50,14 @@ export default async function TutorDashboardPage() {
     },
     {
       label: "Total applicants",
-      value: 0,
-      description: "Across all posts",
+      value: "—",
+      description: "Coming soon",
     },
     {
       label: "Current plan",
       value: currentPlan,
-      description: currentPlan === "Pro" ? "Unlimited posts" : "Upgrade for unlimited",
+      description:
+        currentPlan === "Pro" ? "Unlimited posts" : "Upgrade for unlimited",
     },
   ];
 
@@ -98,12 +111,7 @@ export default async function TutorDashboardPage() {
             My tuitions
           </Button>
 
-          <Button
-            render={<Link href="/dashboard/Tutor/applicants" />}
-            variant="outline"
-          >
-            Manage applicants
-          </Button>
+          {/* "Manage applicants" button is removed until the applicants page is built */}
         </div>
       </div>
     </section>

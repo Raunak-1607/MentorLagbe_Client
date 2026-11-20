@@ -48,7 +48,7 @@ const dashboardMenus: Record<Role, MenuItem[]> = {
     { label: "Post tuition", href: "/dashboard/Tutor/post-tuition", icon: PlusCircle },
     { label: "My tuitions", href: "/dashboard/Tutor/my-tuitions", icon: FileText },
     { label: "Applicants", href: "/dashboard/Tutor/applicants", icon: Users },
-    { label: "Update profile", href: "/dashboard/Tutor/profile", icon: UserPen },
+    { label: "Update profile", href: "/dashboard/Tutor/update-profile", icon: UserPen },
     { label: "Upgrade to Pro", href: "/pricing", icon: Crown },
   ],
   admin: [
