@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import PayButton from "./components/PayButton";
 
 export default async function PricingPage({
@@ -12,7 +14,14 @@ export default async function PricingPage({
       "Order canceled -- continue to shop around and check out when you're ready.",
     );
   }
-  const isPro = false;
+
+  // Get current user session
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  // Simple condition: check if user is on Pro plan
+  const isPro = session?.user?.plan === "pro";
 
   return (
     <div className="py-2">
@@ -64,14 +73,19 @@ export default async function PricingPage({
 
           {/* Stripe Subscribe Button */}
           <div className="mt-8">
-            <form action="/api/checkout_sessions" method="POST">
-              <section>
-                <button type="submit" role="link">
-                  <PayButton isPro={isPro} />
-                </button>
-              </section>
-            </form>
-            
+            {isPro ? (
+              <button
+                type="button"
+                disabled
+                className="inline-flex items-center justify-center rounded-xl bg-gray-200 px-6 py-3 text-sm font-semibold text-gray-500 cursor-not-allowed"
+              >
+                Current plan: Pro
+              </button>
+            ) : (
+              <form action="/api/checkout_sessions" method="POST">
+                <PayButton isPro={false} />
+              </form>
+            )}
           </div>
         </div>
 
@@ -90,8 +104,9 @@ export default async function PricingPage({
             </div>
 
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-gray-500">
-              You pay on Stripe Checkout. After paying you land on a success
-              page and your plan changes to Pro.
+              {isPro
+                ? "You have full access to unlimited tuition posts and priority search listing."
+                : "You pay on Stripe Checkout. After paying you land on a success page and your plan changes to Pro."}
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { toast } from "@heroui/react/toast";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import type { CreateTuition } from "@/types/tuition";
 
 export default function PostTuitionPage() {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,12 +44,21 @@ export default function PostTuitionPage() {
         body: JSON.stringify(tuition),
       });
 
-      if (!response.ok) throw new Error("Could not submit tuition.");
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        if (response.status === 403) {
+          toast.danger(result?.message || "Free limit reached. Redirecting to payment page...");
+          router.push("/dashboard/Tutor/pricing");
+          return;
+        }
+        throw new Error(result?.message || "Could not submit tuition.");
+      }
 
       toast.success("Tuition submitted for admin approval.");
       form.reset();
-    } catch {
-      toast.danger("Could not submit tuition.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not submit tuition.";
+      toast.danger(message);
     } finally {
       setIsSubmitting(false);
 

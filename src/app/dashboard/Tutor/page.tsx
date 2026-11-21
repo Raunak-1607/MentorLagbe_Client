@@ -20,12 +20,15 @@ export default async function TutorDashboardPage() {
   let activeAndApproved = 0;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tuition`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tuition?email=${session.user.email}`, {
       cache: "no-store",
     });
 
     if (res.ok) {
-      const tuitions: Tuition[] = await res.json();
+      const allTuitions = await res.json();
+      const tuitions: Tuition[] = Array.isArray(allTuitions)
+        ? allTuitions.filter((t: { tutorEmail?: string }) => t.tutorEmail === session.user.email)
+        : [];
       tuitionsPosted = tuitions.length;
       activeAndApproved = tuitions.filter(
         (t) => t.approvalStatus === "approved" && t.isActive
@@ -35,7 +38,8 @@ export default async function TutorDashboardPage() {
     // Backend unreachable — show zeros gracefully
   }
 
-  const currentPlan = session.user.plan === "premium" ? "Pro" : "Free";
+  const isPro = session.user.plan === "pro";
+  const currentPlan = isPro ? "Pro" : "Free";
 
   const stats = [
     {
@@ -72,7 +76,15 @@ export default async function TutorDashboardPage() {
         </div>
 
         <Button
-          render={<Link href="/dashboard/Tutor/post-tuition" />}
+          render={
+            <Link
+              href={
+                !isPro && tuitionsPosted >= 2
+                  ? "/dashboard/Tutor/pricing"
+                  : "/dashboard/Tutor/post-tuition"
+              }
+            />
+          }
           className="bg-indigo-600 hover:bg-indigo-700"
         >
           Post new tuition

@@ -17,6 +17,19 @@ export async function POST(request: Request) {
   const session = await getTutorSession();
   if (!session) return NextResponse.json({ message: "Only signed-in tutors can post tuitions." }, { status: 401 });
 
+  // Free Tutors can post up to 2 tuitions; Pro Tutors can post unlimited tuitions
+  const isPro = session.user.plan === "pro";
+
+  if (!isPro) {
+    const count = await db.collection<Tuition>("tuition").countDocuments({ tutorId: session.user.id });
+    if (count >= 2) {
+      return NextResponse.json(
+        { message: "Free Tutors can post up to 2 tuitions. Upgrade to Pro for unlimited tuitions." },
+        { status: 403 }
+      );
+    }
+  }
+
   const body = (await request.json()) as CreateTuition;
 
   if (!body.title || !body.subject || !body.classLevel || !body.location || !body.description) {

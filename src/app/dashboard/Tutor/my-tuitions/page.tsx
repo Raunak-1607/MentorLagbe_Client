@@ -2,20 +2,30 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { MyTuitionCard, MyTuitionCardProps } from "@/components/my-tuition-card";
-import { auth, db } from "@/lib/auth";
-import type { Tuition } from "@/types/tuition";
+import { auth } from "@/lib/auth";
 
 const tableHeaders = ["Tuition", "Fee", "Admin status", "Active", "Actions"];
+
 export default async function MyTuitionsPage() {
-  // const session = await auth.api.getSession({ headers: await headers() });
-  // const tutorId = session?.user.role === "tutor" ? session.user.id : "";
+  const session = await auth.api.getSession({ headers: await headers() });
+  const tutorEmail = session?.user?.email;
 
-  // const tuitions = tutorId
-  //   ? await db.collection<Tuition>("tuition").find({ tutorId }).sort({ createdAt: -1 }).toArray()
-  //   : [];
+  let tuitions: MyTuitionCardProps[] = [];
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tuition`)
-  const tuitions = await res.json();
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/tuition?email=${tutorEmail}`,
+      { cache: "no-store" }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      tuitions = Array.isArray(data)
+        ? data.filter((t: { tutorEmail?: string }) => t.tutorEmail === tutorEmail)
+        : [];
+    }
+  } catch {
+    tuitions = [];
+  }
 
   return (
     <section>
@@ -40,9 +50,17 @@ export default async function MyTuitionsPage() {
             </tr>
           </thead>
           <tbody>
-            {tuitions.map((tuition : MyTuitionCardProps ,index:number) => (
-              <MyTuitionCard key={index} {...tuition} />
-            ))}
+            {tuitions.length > 0 ? (
+              tuitions.map((tuition: MyTuitionCardProps, index: number) => (
+                <MyTuitionCard key={index} {...tuition} />
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                  No tuitions posted yet.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
