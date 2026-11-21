@@ -49,3 +49,38 @@ export const getTuitionDetails = async (id: string) => {
 
   return null;
 };
+
+export const updateTuition = async (
+  id: string,
+  updateData: Record<string, unknown>
+) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+  try {
+    const res = await fetch(`${baseUrl}/tuition/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateData),
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, ...data };
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    return { ok: false, message: err.message };
+  }
+};
+
+export const deleteTuition = async (id: string) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+  try {
+    const res = await fetch(`${baseUrl}/tuition/${id}`, {
+      method: "DELETE",
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, ...data };
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    return { ok: false, message: err.message };
+  }
+};
