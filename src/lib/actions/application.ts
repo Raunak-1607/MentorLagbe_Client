@@ -48,3 +48,19 @@ export const getApplications = async (query?: {
     return [];
   }
 };
+
+export const updateApplicationStatus = async (
+  id: string,
+  status: "accepted" | "rejected"
+) => {
+  const res = await fetch(`${getBaseUrl()}/applications/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, ...data };
+};

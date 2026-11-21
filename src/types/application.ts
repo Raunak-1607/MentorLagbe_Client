@@ -2,6 +2,7 @@ export type ApplicationStatus = "pending" | "accepted" | "rejected";
 
 export type Application = {
   _id?: string;
+  id?: string;
   tuitionId: string;
   tuitionTitle: string;
   subject: string;

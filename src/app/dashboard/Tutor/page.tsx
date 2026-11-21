@@ -15,12 +15,14 @@ export default async function TutorDashboardPage() {
     redirect("/");
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+
   // Fetch this tutor's tuitions from the external backend (port 5000)
   let tuitionsPosted = 0;
   let activeAndApproved = 0;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tuition?email=${session.user.email}`, {
+    const res = await fetch(`${baseUrl}/tuition?email=${session.user.email}`, {
       cache: "no-store",
     });
 
@@ -38,6 +40,28 @@ export default async function TutorDashboardPage() {
     // Backend unreachable — show zeros gracefully
   }
 
+  // Fetch this tutor's total applicants and accepted applicants
+  let totalApplicants = 0;
+  let acceptedApplicants = 0;
+
+  try {
+    const appRes = await fetch(`${baseUrl}/applications?tutorEmail=${session.user.email}`, {
+      cache: "no-store",
+    });
+
+    if (appRes.ok) {
+      const allApps = await appRes.json();
+      const apps = Array.isArray(allApps)
+        ? allApps.filter((a: { tutorEmail?: string }) => a.tutorEmail === session.user.email)
+        : [];
+      totalApplicants = apps.length;
+      acceptedApplicants = apps.filter((a: { status?: string }) => a.status === "accepted").length;
+    }
+  } catch {
+    totalApplicants = 0;
+    acceptedApplicants = 0;
+  }
+
   const isPro = session.user.plan === "pro";
   const currentPlan = isPro ? "Pro" : "Free";
 
@@ -45,17 +69,22 @@ export default async function TutorDashboardPage() {
     {
       label: "Tuitions posted",
       value: tuitionsPosted,
-      description: "Free plan limit: 2",
+      description: isPro ? "Unlimited posts" : "Free plan limit: 2",
     },
     {
       label: "Active and approved",
       value: activeAndApproved,
-      description: "Visible to students",
+      description: "Tuition posts approved by admin",
     },
     {
       label: "Total applicants",
-      value: "—",
-      description: "Coming soon",
+      value: totalApplicants,
+      description: "Across your posts",
+    },
+    {
+      label: "Accepted students",
+      value: acceptedApplicants,
+      description: "Accepted by you",
     },
     {
       label: "Current plan",
@@ -91,7 +120,7 @@ export default async function TutorDashboardPage() {
         </Button>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-xl border bg-card p-5">
             <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -123,7 +152,12 @@ export default async function TutorDashboardPage() {
             My tuitions
           </Button>
 
-          {/* "Manage applicants" button is removed until the applicants page is built */}
+          <Button
+            render={<Link href="/dashboard/Tutor/applicants" />}
+            variant="outline"
+          >
+            Manage applicants
+          </Button>
         </div>
       </div>
     </section>
