@@ -41,7 +41,7 @@ const dashboardMenus: Record<Role, MenuItem[]> = {
     { label: "My applications", href: "/dashboard/student/applications", icon: ClipboardList },
     { label: "Saved tuitions", href: "/dashboard/student/saved-tuitions", icon: Heart },
     { label: "Update profile", href: "/dashboard/student/profile", icon: UserPen },
-    { label: "Upgrade to Pro", href: "/pricing", icon: Crown },
+    { label: "Upgrade to Pro", href: "/dashboard/student/pricing", icon: Crown },
   ],
   tutor: [
     { label: "Overview", href: "/dashboard/Tutor", icon: LayoutDashboard },
