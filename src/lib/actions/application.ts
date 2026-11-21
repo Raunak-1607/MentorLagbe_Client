@@ -9,12 +9,14 @@ export const createApplication = async (applicationData: {
   tuitionTitle: string;
   subject: string;
   monthlyFee: number;
+  tutorName?: string;
   tutorEmail: string;
   studentName: string;
   studentEmail: string;
   studentPhone: string;
   preferredSchedule: string;
   studentNote: string;
+  mode?: string;
 }) => {
   const res = await fetch(`${getBaseUrl()}/applications`, {
     method: "POST",
@@ -59,6 +61,15 @@ export const updateApplicationStatus = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ status }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, ...data };
+};
+
+export const deleteApplication = async (id: string) => {
+  const res = await fetch(`${getBaseUrl()}/applications/${id}`, {
+    method: "DELETE",
   });
 
   const data = await res.json().catch(() => ({}));
