@@ -8,7 +8,6 @@ import {
   ClipboardList,
   Crown,
   FileText,
-  Heart,
   LayoutDashboard,
   LogOut,
   PlusCircle,
@@ -38,8 +37,7 @@ type MenuItem = { label: string; href: string; icon: LucideIcon };
 const dashboardMenus: Record<Role, MenuItem[]> = {
   student: [
     { label: "Overview", href: "/dashboard/student", icon: LayoutDashboard },
-    { label: "My applications", href: "/dashboard/student/applications", icon: ClipboardList },
-    { label: "Saved tuitions", href: "/dashboard/student/saved-tuitions", icon: Heart },
+    { label: "My applications", href: "/dashboard/student/my-applications", icon: ClipboardList },
     { label: "Update profile", href: "/dashboard/student/profile", icon: UserPen },
     { label: "Upgrade to Pro", href: "/dashboard/student/pricing", icon: Crown },
   ],

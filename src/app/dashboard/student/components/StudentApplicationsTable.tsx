@@ -30,29 +30,29 @@ export default function StudentApplicationsTable({
     }
   };
 
-  const handleCancel = async (id: string | undefined) => {
+  const handleCancelOrDelete = async (id: string | undefined, isPending: boolean) => {
     if (!id) return;
     setCancelingId(id);
 
     try {
       const res = await deleteApplication(id);
       if (res.ok || res.acknowledged || res.deletedCount !== undefined) {
-        toast.success("Application canceled successfully!");
+        toast.success(
+          isPending
+            ? "Application canceled successfully!"
+            : "Application deleted successfully!"
+        );
         setApplications((prev) =>
           prev.filter((a) => (a._id || a.id) !== id)
         );
       } else {
-        toast.danger(res.message || "Failed to cancel application.");
+        toast.danger(res.message || "Failed to remove application.");
       }
     } catch {
       toast.danger("Network error. Please try again.");
     } finally {
       setCancelingId(null);
     }
-  };
-
-  const handleRate = (tuitionTitle: string) => {
-    toast.info(`Rating feature for "${tuitionTitle}" will be available soon!`);
   };
 
   return (
@@ -79,6 +79,7 @@ export default function StudentApplicationsTable({
                 const appId = app._id || app.id || String(index);
                 const isCanceling = cancelingId === appId;
                 const status = (app.status || "pending").toLowerCase();
+                const isPending = status === "pending";
 
                 const subtitle = [app.subject, app.mode].filter(Boolean).join(" · ");
 
@@ -133,30 +134,16 @@ export default function StudentApplicationsTable({
                       )}
                     </td>
 
-                    {/* Action Column */}
+                    {/* Action Column - Cancel / Delete */}
                     <td className="px-6 py-4 align-middle text-right whitespace-nowrap">
-                      {status === "pending" ? (
-                        <button
-                          type="button"
-                          onClick={() => handleCancel(appId)}
-                          disabled={isCanceling}
-                          className="rounded-lg bg-[#fee2e2] px-4 py-1.5 text-xs font-semibold text-[#ef4444] transition hover:bg-[#fecaca] disabled:opacity-50 cursor-pointer"
-                        >
-                          {isCanceling ? "..." : "Cancel"}
-                        </button>
-                      ) : status === "accepted" ? (
-                        <button
-                          type="button"
-                          onClick={() => handleRate(app.tuitionTitle)}
-                          className="rounded-lg border border-[#4338ca] px-4 py-1.5 text-xs font-semibold text-[#4338ca] transition hover:bg-indigo-50 cursor-pointer"
-                        >
-                          Rate
-                        </button>
-                      ) : (
-                        <span className="text-gray-400 font-medium px-4">
-                          —
-                        </span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleCancelOrDelete(appId, isPending)}
+                        disabled={isCanceling}
+                        className="rounded-lg bg-[#fee2e2] px-4 py-1.5 text-xs font-semibold text-[#ef4444] transition hover:bg-[#fecaca] disabled:opacity-50 cursor-pointer"
+                      >
+                        {isCanceling ? "..." : isPending ? "Cancel" : "Delete"}
+                      </button>
                     </td>
                   </tr>
                 );
