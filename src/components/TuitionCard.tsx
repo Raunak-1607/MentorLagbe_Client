@@ -116,7 +116,7 @@ export default function TuitionCard(props: ComponentProps) {
           </div>
 
           <Link
-            href={tuitionId ? `${process.env.NEXT_PUBLIC_API_URL}/tuition/${tuitionId}` : "#"}
+            href={tuitionId ? `/AllTuition/${tuitionId}` : "#"}
             className="inline-flex items-center justify-center rounded-xl bg-[#4338ca] px-5 py-2.5 text-sm font-medium text-white shadow-xs transition-colors hover:bg-[#3730a3]"
           >
             View details
