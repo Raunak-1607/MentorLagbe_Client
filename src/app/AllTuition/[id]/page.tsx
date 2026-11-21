@@ -1,10 +1,12 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getTuitionDetails } from "@/lib/actions/Tuition";
+import { getApplications } from "@/lib/actions/application";
+import ApplyForm from "./components/ApplyForm";
+import type { Application } from "@/types/application";
 
 export default async function TuitionDetailsPage({
   params,
@@ -30,9 +32,26 @@ export default async function TuitionDetailsPage({
   const role = user?.role; // "student" | "tutor" | "admin"
 
   // Condition checks
-  const isStudent = role === "student";
   const isTutorOrAdmin = role === "tutor" || role === "admin";
   const isLoggedOut = !user;
+
+  // 3. Check if current student has already applied for this tuition via fetch action
+  let existingApp: Application | null = null;
+  const tuitionIdVal = String(tuition._id || tuition.id || id);
+
+  if (role === "student" && user?.email) {
+    try {
+      const apps = await getApplications({
+        tuitionId: tuitionIdVal,
+        studentEmail: user.email,
+      });
+      if (Array.isArray(apps) && apps.length > 0) {
+        existingApp = apps[0];
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   // Helper text formatters
   const formattedClass = tuition.classLevel?.toLowerCase().startsWith("class-")
@@ -152,79 +171,19 @@ export default async function TuitionDetailsPage({
 
           {/* Right Column (Application Form) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
-              <h2 className="text-lg font-bold text-[#0f172a] mb-5">Apply for tuition</h2>
-
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="01XXX XXXXXX"
-                    disabled={isTutorOrAdmin}
-                    className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#4338ca] focus:outline-hidden disabled:bg-gray-50 disabled:text-gray-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Preferred schedule
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Sat, Mon evenings"
-                    disabled={isTutorOrAdmin}
-                    className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#4338ca] focus:outline-hidden disabled:bg-gray-50 disabled:text-gray-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Learning note
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="What do you want to learn?"
-                    disabled={isTutorOrAdmin}
-                    className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#4338ca] focus:outline-hidden disabled:bg-gray-50 disabled:text-gray-400"
-                  />
-                </div>
-
-                {/* Role-based Apply Button */}
-                <div className="pt-2">
-                  {isLoggedOut ? (
-                    <Link
-                      href="/SignIn"
-                      className="inline-flex w-full items-center justify-center rounded-xl bg-[#4338ca] py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-[#3730a3]"
-                    >
-                      Sign in to apply
-                    </Link>
-                  ) : isTutorOrAdmin ? (
-                    <div className="space-y-2">
-                      <button
-                        type="button"
-                        disabled
-                        className="w-full rounded-xl bg-gray-200 py-3 text-sm font-semibold text-gray-500 cursor-not-allowed"
-                      >
-                        Apply now
-                      </button>
-                      <p className="text-center text-xs font-medium text-amber-600">
-                        Only students can apply.
-                      </p>
-                    </div>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="w-full rounded-xl bg-[#4338ca] py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-[#3730a3] cursor-pointer"
-                    >
-                      Apply now
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
+            <ApplyForm
+              tuitionId={tuitionIdVal}
+              tuitionTitle={tuition.title || ""}
+              subject={tuition.subject || ""}
+              monthlyFee={Number(tuition.monthlyFee || 0)}
+              tutorEmail={tuition.tutorEmail || ""}
+              studentName={user?.name || "Student"}
+              studentEmail={user?.email || ""}
+              isLoggedOut={isLoggedOut}
+              isTutorOrAdmin={isTutorOrAdmin}
+              initialApplied={Boolean(existingApp)}
+              initialStatus={existingApp?.status || "pending"}
+            />
 
             {/* Information Card (Other states) */}
             <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xs text-xs text-gray-500 space-y-1.5 leading-relaxed">
