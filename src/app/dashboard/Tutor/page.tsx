@@ -128,6 +128,7 @@ export default async function TutorDashboardPage() {
         </div>
 
         <Button
+          nativeButton={false}
           render={
             <Link
               href={
@@ -162,6 +163,7 @@ export default async function TutorDashboardPage() {
 
         <div className="flex flex-wrap gap-3 p-5">
           <Button
+            nativeButton={false}
             render={<Link href="/dashboard/Tutor/post-tuition" />}
             className="bg-indigo-600 hover:bg-indigo-700"
           >
@@ -169,6 +171,7 @@ export default async function TutorDashboardPage() {
           </Button>
 
           <Button
+            nativeButton={false}
             render={<Link href="/dashboard/Tutor/my-tuitions" />}
             variant="outline"
           >
@@ -176,6 +179,7 @@ export default async function TutorDashboardPage() {
           </Button>
 
           <Button
+            nativeButton={false}
             render={<Link href="/dashboard/Tutor/applicants" />}
             variant="outline"
           >

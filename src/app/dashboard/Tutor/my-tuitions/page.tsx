@@ -44,6 +44,7 @@ export default async function MyTuitionsPage() {
           </p>
         </div>
         <Button
+          nativeButton={false}
           render={<Link href="/dashboard/Tutor/post-tuition" />}
           className="bg-indigo-600 hover:bg-indigo-700"
         >
