@@ -28,7 +28,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     <Suspense
       fallback={
         <div className="flex min-h-full flex-col">
-          <Navbar />
+          <div className="h-16 w-full" />
           {children}
           <Footer />
         </div>

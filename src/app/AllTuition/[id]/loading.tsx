@@ -1,40 +1,15 @@
-export default function TuitionLoading() {
+export default function TuitionDetailsLoading() {
   return (
-    <main className="min-h-screen bg-[#f8f9fd] py-10 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl animate-pulse">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          {/* Left column skeleton */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Banner */}
-            <div className="h-64 sm:h-72 w-full rounded-3xl bg-slate-200" />
-            {/* Title */}
-            <div className="h-8 w-2/3 rounded-lg bg-slate-200" />
-            {/* Badges */}
-            <div className="flex gap-2">
-              <div className="h-6 w-20 rounded-full bg-slate-200" />
-              <div className="h-6 w-16 rounded-full bg-slate-200" />
-              <div className="h-6 w-24 rounded-full bg-slate-200" />
-            </div>
-            {/* Metric cards */}
-            <div className="grid grid-cols-3 gap-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-24 rounded-2xl bg-slate-200" />
-              ))}
-            </div>
-            {/* Description */}
-            <div className="space-y-2">
-              <div className="h-4 w-full rounded bg-slate-200" />
-              <div className="h-4 w-5/6 rounded bg-slate-200" />
-              <div className="h-4 w-4/6 rounded bg-slate-200" />
-            </div>
-          </div>
-
-          {/* Right column skeleton */}
-          <div className="lg:col-span-4">
-            <div className="h-96 rounded-2xl bg-slate-200" />
-          </div>
+    <div className="mx-auto max-w-6xl px-4 py-8 animate-pulse space-y-6">
+      <div className="h-8 w-2/3 rounded-lg bg-gray-200" />
+      <div className="h-64 w-full rounded-2xl bg-gray-100" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 space-y-4">
+          <div className="h-6 w-1/3 rounded bg-gray-200" />
+          <div className="h-24 w-full rounded-xl bg-gray-100" />
         </div>
+        <div className="h-48 rounded-2xl bg-gray-100" />
       </div>
-    </main>
+    </div>
   );
 }

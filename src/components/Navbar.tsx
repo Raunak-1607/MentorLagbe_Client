@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "@heroui/react/toast";
 import Link from "next/link";
@@ -15,7 +15,7 @@ const navLinks = [
   { name: "How It Works", href: "/how-it-works" },
 ];
 
-const Navbar = () => {
+function NavbarContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
@@ -184,6 +184,31 @@ const Navbar = () => {
         ) : null}
       </nav>
     </header>
+  );
+}
+
+const Navbar = () => {
+  return (
+    <Suspense
+      fallback={
+        <header className="sticky top-0 z-50 w-full px-3 sm:px-6 pt-3 sm:pt-4 pb-2">
+          <nav className="mx-auto max-w-7xl rounded-2xl bg-white px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 shadow-xs border border-gray-100/80">
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-2.5 shrink-0">
+                <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-indigo-700 font-bold text-white shadow-xs">
+                  ML
+                </div>
+                <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">
+                  MentorLagbe
+                </span>
+              </Link>
+            </div>
+          </nav>
+        </header>
+      }
+    >
+      <NavbarContent />
+    </Suspense>
   );
 };
 
