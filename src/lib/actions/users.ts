@@ -1,4 +1,5 @@
 import type { AppUser } from "@/types/user";
+import { getTokenByClient } from "@/lib/GetTokenClient";
 
 const getBaseUrl = () => {
   return process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
@@ -20,11 +21,13 @@ export const updateUser = async (
   id: string,
   data: Partial<AppUser>
 ) => {
+  const token = await getTokenByClient();
   try {
     const res = await fetch(`${getBaseUrl()}/users/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { authorization: `Barer ${token}` } : {}),
       },
       body: JSON.stringify(data),
     });

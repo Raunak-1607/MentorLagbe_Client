@@ -1,4 +1,5 @@
 import type { Application } from "@/types/application";
+import { getTokenByClient } from "@/lib/GetTokenClient";
 
 const getBaseUrl = () => {
   return process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
@@ -18,10 +19,12 @@ export const createApplication = async (applicationData: {
   studentNote: string;
   mode?: string;
 }) => {
+  const token = await getTokenByClient();
   const res = await fetch(`${getBaseUrl()}/applications`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { authorization: `Barer ${token}` } : {}),
     },
     body: JSON.stringify(applicationData),
   });
@@ -55,10 +58,12 @@ export const updateApplicationStatus = async (
   id: string,
   status: "accepted" | "rejected"
 ) => {
+  const token = await getTokenByClient();
   const res = await fetch(`${getBaseUrl()}/applications/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { authorization: `Barer ${token}` } : {}),
     },
     body: JSON.stringify({ status }),
   });
@@ -68,8 +73,12 @@ export const updateApplicationStatus = async (
 };
 
 export const deleteApplication = async (id: string) => {
+  const token = await getTokenByClient();
   const res = await fetch(`${getBaseUrl()}/applications/${id}`, {
     method: "DELETE",
+    headers: {
+      ...(token ? { authorization: `Barer ${token}` } : {}),
+    },
   });
 
   const data = await res.json().catch(() => ({}));

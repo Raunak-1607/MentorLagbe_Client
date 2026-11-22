@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
+import { getTokenByServer } from "@/lib/GetTokenServer";
 import PendingTuitionsTable from "./components/PendingTuitionsTable";
 import type { Tuition } from "@/types/tuition";
 
@@ -22,6 +23,12 @@ export default async function AdminDashboardPage() {
     redirect("/");
   }
 
+  const tokenRes = await getTokenByServer();
+  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
+  const authHeaders: Record<string, string> = token
+    ? { authorization: `Barer ${token}` }
+    : {};
+
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
 
   // --- Fetch all users ---
@@ -31,7 +38,10 @@ export default async function AdminDashboardPage() {
   let tutorsOnPro = 0;
 
   try {
-    const usersRes = await fetch(`${baseUrl}/users`, { cache: "no-store" });
+    const usersRes = await fetch(`${baseUrl}/users`, {
+      cache: "no-store",
+      headers: authHeaders,
+    });
     if (usersRes.ok) {
       const allUsers: UserDoc[] = await usersRes.json();
       totalUsers = allUsers.length;
@@ -51,7 +61,10 @@ export default async function AdminDashboardPage() {
   let pendingTuitions: Tuition[] = [];
 
   try {
-    const tuitionsRes = await fetch(`${baseUrl}/tuition`, { cache: "no-store" });
+    const tuitionsRes = await fetch(`${baseUrl}/tuition`, {
+      cache: "no-store",
+      headers: authHeaders,
+    });
     if (tuitionsRes.ok) {
       const allTuitions: Tuition[] = await tuitionsRes.json();
       pendingTuitions = Array.isArray(allTuitions)
@@ -71,7 +84,10 @@ export default async function AdminDashboardPage() {
   let totalTransactions = 0;
 
   try {
-    const paymentsRes = await fetch(`${baseUrl}/payments`, { cache: "no-store" });
+    const paymentsRes = await fetch(`${baseUrl}/payments`, {
+      cache: "no-store",
+      headers: authHeaders,
+    });
     if (paymentsRes.ok) {
       const allPayments = await paymentsRes.json();
       if (Array.isArray(allPayments)) {

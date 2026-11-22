@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { toast } from "@heroui/react/toast";
+import { getTokenByClient } from "@/lib/GetTokenClient";
 
 interface PendingTuition {
   _id?: string;
@@ -31,11 +32,15 @@ export default function PendingTuitionsTable({
     setLoadingId(id);
 
     try {
+      const token = await getTokenByClient();
       const baseUrl =
         process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
       const res = await fetch(`${baseUrl}/tuition/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { authorization: `Barer ${token}` } : {}),
+        },
         body: JSON.stringify({ approvalStatus: decision }),
       });
 

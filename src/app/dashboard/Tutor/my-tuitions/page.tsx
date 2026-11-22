@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
+import { getTokenByServer } from "@/lib/GetTokenServer";
 import type { MyTuitionCardProps } from "@/components/my-tuition-card";
 import MyTuitionsTable from "./components/MyTuitionsTable";
 
@@ -9,13 +10,19 @@ export default async function MyTuitionsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   const tutorEmail = session?.user?.email;
 
+  const tokenRes = await getTokenByServer();
+  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
+  const authHeaders: Record<string, string> = token
+    ? { authorization: `Barer ${token}` }
+    : {};
+
   let tuitions: MyTuitionCardProps[] = [];
 
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
     const res = await fetch(
       `${baseUrl}/tuition?email=${tutorEmail}`,
-      { cache: "no-store" }
+      { cache: "no-store", headers: authHeaders }
     );
     if (res.ok) {
       const data = await res.json();

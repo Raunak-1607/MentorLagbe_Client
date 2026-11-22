@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "@heroui/react/toast";
 import { createApplication } from "@/lib/actions/application";
+import { getTokenByClient } from "@/lib/GetTokenClient";
 
 interface ApplyFormProps {
   tuitionId: string;
@@ -17,6 +18,7 @@ interface ApplyFormProps {
   isTutorOrAdmin: boolean;
   initialApplied: boolean;
   initialStatus?: string;
+  token?: string;
 }
 
 export default function ApplyForm({
@@ -31,6 +33,7 @@ export default function ApplyForm({
   isTutorOrAdmin,
   initialApplied,
   initialStatus = "pending",
+  token,
 }: ApplyFormProps) {
   const [phone, setPhone] = useState("");
   const [schedule, setSchedule] = useState("");
@@ -38,6 +41,18 @@ export default function ApplyForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasApplied, setHasApplied] = useState(initialApplied);
   const [status, setStatus] = useState(initialStatus);
+
+  useEffect(() => {
+    if (token) {
+      console.log("JWT Token:", token);
+    } else {
+      getTokenByClient().then((clientToken) => {
+        if (clientToken) {
+          console.log("JWT Token (Client):", clientToken);
+        }
+      });
+    }
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

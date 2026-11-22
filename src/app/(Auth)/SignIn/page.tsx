@@ -1,4 +1,3 @@
-
 "use client";
 import { useState } from "react";
 import Link from "next/link";
@@ -6,7 +5,7 @@ import { toast } from "@heroui/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { signIn } from "@/lib/auth-client";
+import { authClient, signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 const dashboardPath = {
@@ -17,7 +16,8 @@ const dashboardPath = {
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,10 +45,17 @@ export default function SignInPage() {
       toast.success("You have signed in successfully.");
       router.replace(destination);
     }
-
-    
-    
   };
+
+  const signInGoogle = async () => {
+    setIsGoogleLoading(true);
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
+    setIsGoogleLoading(false);
+  };
+
   return (
     <main className="flex flex-1 items-center justify-center bg-[#f0f1ff] px-5 py-12 sm:px-8">
       <section className="w-full max-w-md rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm sm:p-9">
@@ -115,12 +122,14 @@ export default function SignInPage() {
         <Button
           type="button"
           variant="outline"
+          onClick={signInGoogle}
+          disabled={isGoogleLoading}
           className="h-12 w-full rounded-xl border-indigo-200 text-base text-indigo-700 hover:bg-indigo-50"
         >
           <span className="flex size-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
             G
           </span>
-          Continue with Google
+          {isGoogleLoading ? "Redirecting..." : "Continue with Google"}
         </Button>
 
         <p className="mt-7 text-center text-sm text-slate-600">

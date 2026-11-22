@@ -2,6 +2,7 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { getTokenByServer } from "@/lib/GetTokenServer";
 import type { PaymentRecord } from "@/types/payment";
 import type { AppUser } from "@/types/user";
 
@@ -15,6 +16,12 @@ export default async function AdminTransactionsPage() {
     redirect("/");
   }
 
+  const tokenRes = await getTokenByServer();
+  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
+  const authHeaders: Record<string, string> = token
+    ? { authorization: `Barer ${token}` }
+    : {};
+
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
 
   // Fetch payments and users in parallel
@@ -23,8 +30,8 @@ export default async function AdminTransactionsPage() {
 
   try {
     const [paymentsRes, usersRes] = await Promise.all([
-      fetch(`${baseUrl}/payments`, { cache: "no-store" }),
-      fetch(`${baseUrl}/users`, { cache: "no-store" }),
+      fetch(`${baseUrl}/payments`, { cache: "no-store", headers: authHeaders }),
+      fetch(`${baseUrl}/users`, { cache: "no-store", headers: authHeaders }),
     ]);
 
     if (paymentsRes.ok) {

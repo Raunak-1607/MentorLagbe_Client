@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { getTokenByServer } from "@/lib/GetTokenServer";
 import StudentApplicationsTable from "./components/StudentApplicationsTable";
 import type { Application } from "@/types/application";
 
@@ -16,6 +17,12 @@ export default async function StudentDashboardPage() {
     redirect("/");
   }
 
+  const tokenRes = await getTokenByServer();
+  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
+  const authHeaders: Record<string, string> = token
+    ? { authorization: `Barer ${token}` }
+    : {};
+
   const studentEmail = session.user.email;
   let applications: Application[] = [];
 
@@ -23,6 +30,7 @@ export default async function StudentDashboardPage() {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
     const res = await fetch(`${baseUrl}/applications?studentEmail=${studentEmail}`, {
       cache: "no-store",
+      headers: authHeaders,
     });
 
     if (res.ok) {

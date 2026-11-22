@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
+import { getTokenByServer } from "@/lib/GetTokenServer";
 import type { Tuition } from "@/types/tuition";
 
 export default async function TutorDashboardPage() {
@@ -15,6 +16,12 @@ export default async function TutorDashboardPage() {
     redirect("/");
   }
 
+  const tokenRes = await getTokenByServer();
+  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
+  const authHeaders: Record<string, string> = token
+    ? { authorization: `Barer ${token}` }
+    : {};
+
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
 
   // Fetch this tutor's tuitions from the external backend (port 5000)
@@ -24,6 +31,7 @@ export default async function TutorDashboardPage() {
   try {
     const res = await fetch(`${baseUrl}/tuition?email=${session.user.email}`, {
       cache: "no-store",
+      headers: authHeaders,
     });
 
     if (res.ok) {
@@ -47,6 +55,7 @@ export default async function TutorDashboardPage() {
   try {
     const appRes = await fetch(`${baseUrl}/applications?tutorEmail=${session.user.email}`, {
       cache: "no-store",
+      headers: authHeaders,
     });
 
     if (appRes.ok) {

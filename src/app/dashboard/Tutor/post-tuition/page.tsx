@@ -3,6 +3,7 @@
 import { toast } from "@heroui/react/toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getTokenByClient } from "@/lib/GetTokenClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,9 +39,13 @@ export default function PostTuitionPage() {
 
     setIsSubmitting(true);
     try {
+      const token = await getTokenByClient();
       const response = await fetch("/api/tuitions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { authorization: `Barer ${token}` } : {}),
+        },
         body: JSON.stringify(tuition),
       });
 

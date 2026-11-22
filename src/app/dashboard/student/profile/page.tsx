@@ -1,5 +1,6 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
+import { getTokenByClient } from "@/lib/GetTokenClient";
 import { toast } from "@heroui/react/toast";
 import React, { useState } from "react";
 
@@ -20,10 +21,12 @@ const UpdateProfilePage = () => {
 
     try {
       setLoading(true);
+      const token = await getTokenByClient();
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { authorization: `Barer ${token}` } : {}),
         },
         body: JSON.stringify(data),
       });

@@ -1,3 +1,5 @@
+import { getTokenByClient } from "@/lib/GetTokenClient";
+
 export const getTuition = async () => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
   try {
@@ -55,11 +57,13 @@ export const updateTuition = async (
   updateData: Record<string, unknown>
 ) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+  const token = await getTokenByClient();
   try {
     const res = await fetch(`${baseUrl}/tuition/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { authorization: `Barer ${token}` } : {}),
       },
       body: JSON.stringify(updateData),
     });
@@ -73,9 +77,13 @@ export const updateTuition = async (
 
 export const deleteTuition = async (id: string) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+  const token = await getTokenByClient();
   try {
     const res = await fetch(`${baseUrl}/tuition/${id}`, {
       method: "DELETE",
+      headers: {
+        ...(token ? { authorization: `Barer ${token}` } : {}),
+      },
     });
     const data = await res.json().catch(() => ({}));
     return { ok: res.ok, ...data };

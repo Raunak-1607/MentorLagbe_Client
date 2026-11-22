@@ -7,6 +7,7 @@ import { getTuitionDetails } from "@/lib/actions/Tuition";
 import { getApplications } from "@/lib/actions/application";
 import ApplyForm from "./components/ApplyForm";
 import type { Application } from "@/types/application";
+import { getTokenByServer } from "@/lib/GetTokenServer";
 
 export default async function TuitionDetailsPage({
   params,
@@ -14,7 +15,9 @@ export default async function TuitionDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
+  const tokenRes = await getTokenByServer();
+  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
+  console.log("JWT Token (Server):", token);
   // 1. Fetch tuition details via getTuitionDetails action
   const rawTuition = await getTuitionDetails(id);
   const tuition = Array.isArray(rawTuition) ? rawTuition[0] : rawTuition;
@@ -183,6 +186,7 @@ export default async function TuitionDetailsPage({
               isTutorOrAdmin={isTutorOrAdmin}
               initialApplied={Boolean(existingApp)}
               initialStatus={existingApp?.status || "pending"}
+              token={token}
             />
 
             {/* Information Card (Other states) */}
