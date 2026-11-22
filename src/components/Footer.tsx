@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0e1d4b] px-5 py-10 text-indigo-100 sm:px-8 lg:px-12">
+    <footer className="bg-[#0e1d4b] px-4 sm:px-8 lg:px-12 py-8 sm:py-10 text-indigo-100">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 border-b border-indigo-300/20 pb-8 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link href="/" className="text-xl font-bold text-white">
@@ -14,8 +14,8 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
-          <Link href="/tutorials" className="transition hover:text-white">
-            Browse tutorials
+          <Link href="/AllTuition" className="transition hover:text-white">
+            Browse tuitions
           </Link>
           <Link href="/pricing" className="transition hover:text-white">
             Pricing
@@ -25,7 +25,7 @@ const Footer = () => {
           </Link>
         </div>
       </div>
-      <p className="mx-auto max-w-7xl pt-6 text-sm text-indigo-300">
+      <p className="mx-auto max-w-7xl pt-6 text-xs sm:text-sm text-indigo-300">
         © 2026 MentorLagbe. All rights reserved.
       </p>
     </footer>

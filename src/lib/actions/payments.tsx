@@ -1,8 +1,21 @@
+import { getTokenByServer } from "@/lib/GetTokenServer";
 import { getTokenByClient } from "@/lib/GetTokenClient";
 
 export const checkoutVerify = async (sessionId: string) => {
-  const token = await getTokenByClient();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments`, {
+  let token: string | null = null;
+  try {
+    if (typeof window === "undefined") {
+      const serverToken = await getTokenByServer();
+      token = typeof serverToken === "string" ? serverToken : (serverToken?.token ?? null);
+    } else {
+      token = await getTokenByClient();
+    }
+  } catch {
+    token = null;
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+  const res = await fetch(`${baseUrl}/payments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

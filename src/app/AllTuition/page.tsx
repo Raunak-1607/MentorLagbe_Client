@@ -20,10 +20,12 @@ export default async function AllTuitionPage({
 
   const allTuitions: TuitionCardProps[] = await getTuition();
 
-  // 1. Filter approved tuitions
+  // 1. Filter approved tuitions (case-insensitive)
   const approvedTuitions = Array.isArray(allTuitions)
     ? allTuitions.filter(
-        (t: any) => !t.approvalStatus || t.approvalStatus === "approved"
+        (t: any) =>
+          !t.approvalStatus ||
+          t.approvalStatus.toLowerCase() === "approved"
       )
     : [];
 
@@ -39,7 +41,12 @@ export default async function AllTuitionPage({
 
     // Filter by subject
     if (subject && subject !== "all") {
-      if (t.subject?.toLowerCase() !== subject.toLowerCase()) return false;
+      const qSub = subject.toLowerCase().trim();
+      const tSub = t.subject?.toLowerCase().trim() || "";
+      const isMath =
+        (qSub === "math" || qSub === "mathematics") &&
+        (tSub === "math" || tSub === "mathematics");
+      if (!isMath && tSub !== qSub && !tSub.includes(qSub)) return false;
     }
 
     // Filter by class level

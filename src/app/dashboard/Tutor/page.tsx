@@ -71,7 +71,21 @@ export default async function TutorDashboardPage() {
     acceptedApplicants = 0;
   }
 
-  const isPro = session.user.plan === "pro";
+  // Fetch fresh user data from backend API
+  let freshPlan: string = session.user.plan ?? "free";
+  try {
+    const userRes = await fetch(`${baseUrl}/users/${session.user.id}`, {
+      cache: "no-store",
+    });
+    if (userRes.ok) {
+      const userData = await userRes.json();
+      if (userData?.plan) freshPlan = userData.plan;
+    }
+  } catch {
+    // fallback to session plan
+  }
+
+  const isPro = freshPlan === "pro";
   const currentPlan = isPro ? "Pro" : "Free";
 
   const stats = [

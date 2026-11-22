@@ -9,6 +9,7 @@ const dashboardTitles: Record<string, string> = {
   "/dashboard/Tutor": "Overview",
   "/dashboard/admin": "Overview",
   "/dashboard/student/applications": "My applications",
+  "/dashboard/student/my-applications": "My applications",
   "/dashboard/student/saved-tuitions": "Saved tuitions",
   "/dashboard/student/profile": "Update profile",
   "/dashboard/student/pricing": "Upgrade to Pro",
@@ -31,12 +32,12 @@ const DashboardLayoutPage = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider className="min-h-0 flex-1">
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 items-center border-b px-4">
+        <header className="flex h-14 sm:h-16 items-center border-b px-3 sm:px-5 bg-white">
           <SidebarTrigger />
-          <h1 className="ml-3 text-lg font-semibold">{title}</h1>
+          <h1 className="ml-3 text-base sm:text-lg font-semibold text-gray-900 truncate">{title}</h1>
         </header>
-        <main className="p-4 md:p-8">
-          <div className="container mx-auto">{children}</div>
+        <main className="p-3 sm:p-5 md:p-8">
+          <div className="w-full max-w-7xl mx-auto">{children}</div>
         </main>
       </SidebarInset>
     </SidebarProvider>

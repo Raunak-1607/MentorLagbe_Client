@@ -22,11 +22,12 @@ const UpdateProfilePage = () => {
     try {
       setLoading(true);
       const token = await getTokenByClient();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+      const res = await fetch(`${baseUrl}/users/${user.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { authorization: `Barer ${token}` } : {}),
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(data),
       });

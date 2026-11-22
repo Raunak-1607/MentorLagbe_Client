@@ -20,8 +20,26 @@ export default async function StudentPricingPage({
     headers: await headers(),
   });
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+
+  // Fetch fresh user data from backend API to reflect latest plan
+  let freshPlan: string = session?.user?.plan ?? "free";
+  if (session?.user?.id) {
+    try {
+      const userRes = await fetch(`${baseUrl}/users/${session.user.id}`, {
+        cache: "no-store",
+      });
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        if (userData?.plan) freshPlan = userData.plan;
+      }
+    } catch {
+      // fallback
+    }
+  }
+
   // Simple condition: check if user is on Pro plan
-  const isPro = session?.user?.plan === "pro";
+  const isPro = freshPlan === "pro";
 
   return (
     <div className="py-2">

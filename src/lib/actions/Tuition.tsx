@@ -6,9 +6,15 @@ export const getTuition = async () => {
     const res = await fetch(`${baseUrl}/tuition`, {
       cache: "no-store",
     });
-    if (!res.ok) return [];
-    return await res.json();
-  } catch {
+    if (!res.ok) {
+      console.error(`[getTuition] ${baseUrl}/tuition returned status ${res.status}`);
+      return [];
+    }
+    const data = await res.json();
+    console.log(`[getTuition] Fetched ${Array.isArray(data) ? data.length : 0} total tuitions from backend`);
+    return data;
+  } catch (err) {
+    console.error(`[getTuition] Error connecting to ${baseUrl}/tuition:`, err);
     return [];
   }
 };

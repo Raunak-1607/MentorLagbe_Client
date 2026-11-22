@@ -91,10 +91,18 @@ export default function PostTuitionPage() {
                 <SelectValue placeholder="Select subject" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="physics">Physics</SelectItem>
-                <SelectItem value="mathematics">Mathematics</SelectItem>
-                <SelectItem value="english">English</SelectItem>
-                <SelectItem value="ict">ICT</SelectItem>
+                <SelectItem value="Physics">Physics</SelectItem>
+                <SelectItem value="Chemistry">Chemistry</SelectItem>
+                <SelectItem value="Math">Math</SelectItem>
+                <SelectItem value="Biology">Biology</SelectItem>
+                <SelectItem value="English">English</SelectItem>
+                <SelectItem value="ICT">ICT</SelectItem>
+                <SelectItem value="Programming">Programming</SelectItem>
+                <SelectItem value="IELTS">IELTS</SelectItem>
+                <SelectItem value="Bangla">Bangla</SelectItem>
+                <SelectItem value="Higher Math">Higher Math</SelectItem>
+                <SelectItem value="Accounting">Accounting</SelectItem>
+                <SelectItem value="General Science">General Science</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -110,6 +118,9 @@ export default function PostTuitionPage() {
                 <SelectItem value="class-9-10">Class 9 to 10</SelectItem>
                 <SelectItem value="hsc">HSC</SelectItem>
                 <SelectItem value="admission">Admission</SelectItem>
+                <SelectItem value="o-level">O Level</SelectItem>
+                <SelectItem value="a-level">A Level</SelectItem>
+                <SelectItem value="adult">Adult</SelectItem>
               </SelectContent>
             </Select>
           </div>

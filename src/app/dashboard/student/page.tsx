@@ -23,11 +23,26 @@ export default async function StudentDashboardPage() {
     ? { authorization: `Barer ${token}` }
     : {};
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
+
+  // Fetch fresh user data from backend API
+  let freshPlan: string = session.user.plan ?? "free";
+  try {
+    const userRes = await fetch(`${baseUrl}/users/${session.user.id}`, {
+      cache: "no-store",
+    });
+    if (userRes.ok) {
+      const userData = await userRes.json();
+      if (userData?.plan) freshPlan = userData.plan;
+    }
+  } catch {
+    // fallback to session plan
+  }
+
   const studentEmail = session.user.email;
   let applications: Application[] = [];
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
     const res = await fetch(`${baseUrl}/applications?studentEmail=${studentEmail}`, {
       cache: "no-store",
       headers: authHeaders,
@@ -50,7 +65,7 @@ export default async function StudentDashboardPage() {
     (a) => !a.status || a.status === "pending"
   ).length;
 
-  const isPro = session.user.plan === "pro";
+  const isPro = freshPlan === "pro";
   const firstName = session.user.name ? session.user.name.split(" ")[0] : "Student";
 
   const stats = [

@@ -33,7 +33,7 @@ export default async function TuitionDetailsPage({
   try {
     const tokenRes = await getTokenByServer();
     token = typeof tokenRes === "string" ? tokenRes : (tokenRes?.token ?? undefined);
-    console.log("JWT Token (Server):", token);
+    // console.log("JWT Token (Server):", token);
   } catch {
     token = undefined;
   }
@@ -89,13 +89,13 @@ export default async function TuitionDetailsPage({
     : "TR";
 
   return (
-    <main className="min-h-screen bg-[#f8f9fd] py-10 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#f8f9fd] py-6 sm:py-10 px-3.5 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
+        <div className="grid grid-cols-1 gap-6 lg:gap-8 lg:grid-cols-12 items-start">
           {/* Left Column (Tuition Details) */}
           <div className="lg:col-span-8">
             {/* Banner Section */}
-            <div className="relative h-64 sm:h-72 w-full overflow-hidden rounded-3xl bg-[#3730a3] p-6 sm:p-8 flex items-end text-white shadow-xs">
+            <div className="relative h-48 sm:h-64 md:h-72 w-full overflow-hidden rounded-2xl sm:rounded-3xl bg-[#3730a3] p-4 sm:p-6 md:p-8 flex items-end text-white shadow-xs">
               <div className="absolute -right-12 -top-12 h-64 w-64 rounded-full bg-[#4338ca] opacity-70 pointer-events-none" />
 
               {tuition.bannerImage ? (
@@ -108,48 +108,48 @@ export default async function TuitionDetailsPage({
                 />
               ) : null}
 
-              <p className="relative z-10 text-sm font-medium text-white/90">
+              <p className="relative z-10 text-xs sm:text-sm font-medium text-white/90">
                 Banner photo / illustration
               </p>
             </div>
 
             {/* Title */}
-            <h1 className="mt-6 text-2xl sm:text-3xl font-bold tracking-tight text-[#0f172a]">
+            <h1 className="mt-4 sm:mt-6 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#0f172a]">
               {tuition.title}
             </h1>
 
             {/* Badges */}
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center rounded-full bg-[#f0edff] px-3 py-1 text-xs font-semibold text-[#4338ca]">
+            <div className="mt-2.5 sm:mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="inline-flex items-center rounded-full bg-[#f0edff] px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs font-semibold text-[#4338ca]">
                 {formattedSubject}
               </span>
-              <span className="inline-flex items-center rounded-full bg-[#e0f7f6] px-3 py-1 text-xs font-semibold text-[#0e7490]">
+              <span className="inline-flex items-center rounded-full bg-[#e0f7f6] px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs font-semibold text-[#0e7490]">
                 {tuition.mode}
               </span>
-              <span className="inline-flex items-center rounded-full bg-[#f1f3f7] px-3 py-1 text-xs font-semibold text-[#475569]">
+              <span className="inline-flex items-center rounded-full bg-[#f1f3f7] px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs font-semibold text-[#475569]">
                 {formattedClass}
               </span>
             </div>
 
             {/* 3 Metric Cards */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xs">
+            <div className="mt-5 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-4 sm:p-5 shadow-xs">
                 <span className="text-xs font-medium text-gray-500">Monthly fee</span>
-                <p className="mt-1 text-xl font-bold text-[#0f172a]">
+                <p className="mt-1 text-lg sm:text-xl font-bold text-[#0f172a]">
                   ৳{Number(tuition.monthlyFee || 0).toLocaleString()}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xs">
+              <div className="rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-4 sm:p-5 shadow-xs">
                 <span className="text-xs font-medium text-gray-500">Schedule</span>
-                <p className="mt-1 text-xl font-bold text-[#0f172a]">
+                <p className="mt-1 text-lg sm:text-xl font-bold text-[#0f172a]">
                   {tuition.daysPerWeek} days a week
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xs">
+              <div className="rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-4 sm:p-5 shadow-xs">
                 <span className="text-xs font-medium text-gray-500">Location</span>
-                <p className="mt-1 text-xl font-bold text-[#0f172a]">
+                <p className="mt-1 text-lg sm:text-xl font-bold text-[#0f172a]">
                   {tuition.mode}, {tuition.location}
                 </p>
               </div>
