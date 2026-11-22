@@ -6,10 +6,8 @@ export const getTokenByServer = async () => {
     const token = await auth.api.getToken({
       headers: await headers(),
     });
-    console.log("[GetTokenServer] 🔑 Server token:", typeof token === "string" ? token : token?.token);
     return token;
-  } catch (err) {
-    console.error("[GetTokenServer] ❌ Server token error:", err);
+  } catch {
     return null;
   }
 };

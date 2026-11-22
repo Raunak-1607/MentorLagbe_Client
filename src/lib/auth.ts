@@ -3,33 +3,25 @@ import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
 
-const mongoUri = process.env.MONGODB_URL || "mongodb://127.0.0.1:27017/MentorLagbe";
-const client = new MongoClient(mongoUri);
+const client = new MongoClient(process.env.MONGODB_URL as string);
 export const db = client.db("MentorLagbe");
 
 export const auth = betterAuth({
-  baseURL:
-    process.env.BETTER_AUTH_URL ||
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : undefined) ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
-    process.env.NEXT_PUBLIC_APP_URL ||
-    "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   trustedOrigins: [
     "http://localhost:3000",
     "https://*.vercel.app",
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
-    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
-    ...(process.env.VERCEL_PROJECT_PRODUCTION_URL ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`] : []),
   ],
-  secret: process.env.BETTER_AUTH_SECRET || "build_dummy_secret_for_next_build_step",
+  secret: process.env.BETTER_AUTH_SECRET as string,
   emailAndPassword: {
     enabled: true,
   },
    socialProviders: {
         google: { 
-            clientId: process.env.GOOGLE_CLIENT_ID || "placeholder_google_client_id", 
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "placeholder_google_client_secret", 
+            clientId: process.env.GOOGLE_CLIENT_ID as string, 
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
         }, 
     },
   user: {
