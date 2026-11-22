@@ -21,7 +21,8 @@ export default function SignUpPage() {
 
     setIsLoading(true);
 
-    const { data, error } = await signUp.email({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (signUp.email as any)({
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       password: formData.get("password") as string,

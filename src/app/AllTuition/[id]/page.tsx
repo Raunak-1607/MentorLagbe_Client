@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getTuitionDetails } from "@/lib/actions/Tuition";
@@ -15,23 +15,36 @@ export default async function TuitionDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const tokenRes = await getTokenByServer();
-  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
-  console.log("JWT Token (Server):", token);
-  // 1. Fetch tuition details via getTuitionDetails action
+
+  // 1. Check logged in user session
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
+
+  // Guard: if user is not logged in, redirect immediately to sign in page
+  if (!user) {
+    redirect(`/SignIn?callbackUrl=/AllTuition/${id}`);
+  }
+
+  // Safely get token
+  let token: string | undefined = undefined;
+  try {
+    const tokenRes = await getTokenByServer();
+    token = typeof tokenRes === "string" ? tokenRes : (tokenRes?.token ?? undefined);
+    console.log("JWT Token (Server):", token);
+  } catch {
+    token = undefined;
+  }
+
+  // 2. Fetch tuition details via getTuitionDetails action
   const rawTuition = await getTuitionDetails(id);
   const tuition = Array.isArray(rawTuition) ? rawTuition[0] : rawTuition;
 
   if (!tuition) {
     notFound();
   }
-
-  // 2. Get logged in user session
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  const user = session?.user;
   const role = user?.role; // "student" | "tutor" | "admin"
 
   // Condition checks

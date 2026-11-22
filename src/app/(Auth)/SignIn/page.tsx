@@ -37,21 +37,31 @@ export default function SignInPage() {
 
     if (data) {
       const role = data.user.role;
-      const destination =
+      const defaultDestination =
         role === "tutor" || role === "admin"
           ? dashboardPath[role]
           : dashboardPath.student;
 
+      const callbackUrl =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("callbackUrl")
+          : null;
+
       toast.success("You have signed in successfully.");
-      router.replace(destination);
+      router.replace(callbackUrl || defaultDestination);
     }
   };
 
   const signInGoogle = async () => {
     setIsGoogleLoading(true);
+    const callbackUrl =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("callbackUrl")
+        : null;
+
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/dashboard",
+      callbackURL: callbackUrl || "/dashboard",
     });
     setIsGoogleLoading(false);
   };
