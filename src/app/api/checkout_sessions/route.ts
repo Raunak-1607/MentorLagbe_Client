@@ -50,6 +50,13 @@ export async function POST(request: Request) {
     : "/dashboard/Tutor/pricing";
 
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: "Stripe API key is not configured on the server." },
+        { status: 500 }
+      );
+    }
+
     const origin = headersList.get('origin')
 
     // Create Checkout Sessions with Stripe
