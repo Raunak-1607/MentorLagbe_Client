@@ -5,36 +5,28 @@ import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 
-// Inner component that uses usePathname — must be inside <Suspense>
-function LayoutContent({ children }: { children: React.ReactNode }) {
+function HeaderNav() {
   const pathname = usePathname();
+  if (pathname.startsWith("/dashboard")) return null;
+  return <Navbar />;
+}
 
-  // Dashboard pages have their own sidebar, so they do not use the public navbar or footer.
-  if (pathname.startsWith("/dashboard")) {
-    return <>{children}</>;
-  }
-
-  return (
-    <div className="flex min-h-full flex-col">
-      <Navbar />
-      {children}
-      <Footer />
-    </div>
-  );
+function BottomFooter() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/dashboard")) return null;
+  return <Footer />;
 }
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-full flex-col">
-          <div className="h-16 w-full" />
-          {children}
-          <Footer />
-        </div>
-      }
-    >
-      <LayoutContent>{children}</LayoutContent>
-    </Suspense>
+    <div className="flex min-h-full flex-col">
+      <Suspense fallback={<div className="h-16 w-full" />}>
+        <HeaderNav />
+      </Suspense>
+      <div className="flex-1 min-h-0 flex flex-col">{children}</div>
+      <Suspense fallback={null}>
+        <BottomFooter />
+      </Suspense>
+    </div>
   );
 }
