@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getTuition } from "@/lib/actions/Tuition";
+import { getTokenByServer } from "@/lib/GetTokenServer";
 import TuitionApprovalsTable from "./components/TuitionApprovalsTable";
 
 export default async function TuitionApprovalsPage() {
@@ -14,6 +15,9 @@ export default async function TuitionApprovalsPage() {
   if (!session || session.user.role !== "admin") {
     redirect("/");
   }
+
+  const tokenRes = await getTokenByServer();
+  const token = typeof tokenRes === "string" ? tokenRes : tokenRes?.token;
 
   const tuitions = await getTuition();
 
@@ -28,7 +32,7 @@ export default async function TuitionApprovalsPage() {
         </p>
       </div>
 
-      <TuitionApprovalsTable initialTuitions={tuitions} />
+      <TuitionApprovalsTable initialTuitions={tuitions} serverToken={token} />
     </section>
   );
 }

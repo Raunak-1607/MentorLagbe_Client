@@ -7,12 +7,14 @@ import type { Tuition } from "@/types/tuition";
 
 interface TuitionApprovalsTableProps {
   initialTuitions: Tuition[];
+  serverToken?: string;
 }
 
 type FilterType = "all" | "pending" | "approved" | "rejected";
 
 export default function TuitionApprovalsTable({
   initialTuitions,
+  serverToken,
 }: TuitionApprovalsTableProps) {
   const [tuitions, setTuitions] = useState<Tuition[]>(initialTuitions);
   const [filter, setFilter] = useState<FilterType>("all");
@@ -38,7 +40,7 @@ export default function TuitionApprovalsTable({
     setLoadingId(id);
 
     try {
-      const res = await updateTuition(id, { approvalStatus: decision });
+      const res = await updateTuition(id, { approvalStatus: decision }, serverToken);
 
       if (res.ok || res.acknowledged || res.modifiedCount !== undefined) {
         toast.success(

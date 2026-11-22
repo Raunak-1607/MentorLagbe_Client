@@ -60,10 +60,12 @@ export const getTuitionDetails = async (id: string) => {
 
 export const updateTuition = async (
   id: string,
-  updateData: Record<string, unknown>
+  updateData: Record<string, unknown>,
+  fallbackToken?: string
 ) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5000";
-  const token = await getTokenByClient();
+  const clientToken = await getTokenByClient();
+  const token = clientToken || fallbackToken;
   try {
     const res = await fetch(`${baseUrl}/tuition/${id}`, {
       method: "PATCH",
