@@ -1,6 +1,40 @@
-# MentorLagbe
+# 🎓 MentorLagbe — Tuition & Mentorship Management Platform
 
-**MentorLagbe** is a full-stack tuition management platform that connects students with tutors in Bangladesh. Students can discover and apply for tuition listings, while tutors can post and manage their classes — all within a role-based dashboard system backed by secure authentication and payment integration.
+**MentorLagbe** is a comprehensive, production-grade tuition and mentorship management ecosystem designed to bridge the gap between students seeking quality education and qualified tutors offering specialized guidance across Bangladesh. Built with modern full-stack web technologies, MentorLagbe streamlines the entire tuition lifecycle — from posting listings and student applications to rigorous administrative moderation, role-based dashboards, verified credentials, and secure subscription payments.
+
+### 🌟 Project Purpose & Core Vision
+In conventional tutoring marketplaces, finding verified tutors and credible student listings often lacks structure, safety, and transparency. MentorLagbe solves this by introducing:
+- **A Structured Multi-Tier Ecosystem**: Seamless separation of concerns across Students, Tutors, and Platform Administrators.
+- **Strict Quality Control & Moderation**: No tuition post goes live without administrative verification, preventing spam and maintaining high academic standards.
+- **Fair & Monetized Access**: A freemium model powered by Stripe that balances free entry with scalable Pro subscriptions for power educators.
+- **Modern Cloud Media Pipeline**: Zero manual URL pasting with direct-to-cloud image processing via ImgBB for avatars and classroom banners.
+
+---
+
+### 🛡️ The Administrator's Role in MentorLagbe
+The **Admin** serves as the central governing authority, guardian of platform integrity, and operational manager of MentorLagbe. Because tuition arrangements involve financial commitments and academic quality, the platform gives Administrators comprehensive supervisory and enforcement tools:
+
+1. **Tuition Listing Moderation & Gatekeeping**:
+   - Tutors cannot directly publish listings to the public search catalog. Every newly submitted tuition post enters a **Pending** review queue.
+   - Administrators review post details (subject, syllabus, class level, monthly fee, schedule, and uploaded banner imagery).
+   - Admins can **Approve** legitimate listings (making them instantly discoverable on `/AllTuition`) or **Reject** inappropriate, incomplete, or spam listings with real-time status synchronization.
+
+2. **User Governance & Role Administration**:
+   - Centralized oversight of all registered accounts (Students, Tutors, and staff).
+   - Direct capability to view user profiles, registration details, and assigned roles.
+   - Ability to modify user privileges and roles (e.g., reassigning or upgrading user roles between Student, Tutor, and Admin) to resolve user misconfigurations or grant elevated privileges.
+
+3. **Financial & Revenue Auditing**:
+   - Real-time tracking of all incoming Stripe payments and Pro subscription transactions.
+   - Audit trail connecting payment IDs, user identifiers, transaction timestamps, and payment statuses (Success / Failed).
+   - Ensures platform subscription revenue transparency and seamless dispute resolution.
+
+4. **Platform Analytics & Health Monitoring**:
+   - Dedicated administrative dashboard presenting vital platform metrics at a glance:
+     - Total registered user volume and student-to-tutor breakdown
+     - Ratio of Free vs. Pro upgraded tutors
+     - Queue count of pending approvals vs. active, approved tuition posts
+     - Platform-wide listing engagement and application flow.
 
 ---
 
@@ -15,7 +49,7 @@
 | Field    | Value                   |
 |----------|-------------------------|
 | Email    | `biltu@gmail.com`       |
-| Password | `123456`                |
+| Password | `Abcdefgh123`                |
 
 ---
 
@@ -74,11 +108,12 @@
 - Accept or reject student applications
 - Update profile photo (direct ImgBB upload)
 
-### 🛡️ Admin Features
-- View all users (students and tutors) on the platform
-- **Approve or reject** tuition listings submitted by tutors
-- Monitor all transactions and payment history
-- Update admin profile photo
+### 🛡️ Admin Features & Governance Controls
+- **Listing Moderation Engine**: Filter listings by `All`, `Pending`, `Approved`, or `Rejected`. Perform 1-click approvals or rejections to control public visibility on `/AllTuition`.
+- **User Management & Role Switching**: Full registry view of registered users; capability to dynamically update or correct user roles (Student ⇄ Tutor ⇄ Admin) directly from the dashboard.
+- **Financial Audit & Transaction Logs**: Complete record of Stripe subscription events, customer emails, amounts, transaction statuses, and verification logs.
+- **Platform Analytics Hub**: High-level statistical summaries detailing user distributions, Pro conversion metrics, and active listing counts.
+- **Profile & Brand Management**: Dedicated admin profile management with direct ImgBB photo upload and real-time session caching.
 
 ### 🔐 Authentication
 - Email & password sign-up with role selection (Student / Tutor)
