@@ -6,12 +6,18 @@ import { jwt } from "better-auth/plugins";
 const client = new MongoClient(process.env.MONGODB_URL as string);
 export const db = client.db("MentorLagbe");
 
+// Resolve the canonical app URL: explicit env var > Vercel auto-inject > localhost
+const APP_URL =
+  process.env.BETTER_AUTH_URL?.trim() ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  "http://localhost:3000";
+
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: APP_URL,
   trustedOrigins: [
     "http://localhost:3000",
     "https://*.vercel.app",
-    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    APP_URL,
     ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
   ],
   secret: process.env.BETTER_AUTH_SECRET as string,
