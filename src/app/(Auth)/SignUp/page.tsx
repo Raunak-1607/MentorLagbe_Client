@@ -1,11 +1,11 @@
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { signUp, authClient } from "@/lib/auth-client";
+import { signUp, signIn, authClient } from "@/lib/auth-client";
 import { toast } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
@@ -13,10 +13,20 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
+
+  // Already logged in → go to home
+  useEffect(() => {
+    if (!isPending && session) {
+      router.replace("/");
+    }
+  }, [isPending, session, router]);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
     const image = formData.get("imageUrl") as string;
 
     setIsLoading(true);
@@ -25,20 +35,35 @@ export default function SignUpPage() {
     const { data, error } = await (signUp.email as any)({
       name: formData.get("name") as string,
       email: formData.get("email") as string,
-      password: formData.get("password") as string,
+      password,
       phoneNumber: formData.get("phoneNumber") as string,
       role: formData.get("role") as "student" | "tutor",
       ...(image ? { image } : {}),
     });
 
-    setIsLoading(false);
     if (error) {
+      setIsLoading(false);
       toast.danger(error.message || "Could not create your account.");
       return;
     }
+
     if (data) {
-      toast.success("Account created successfully. Please sign in.");
-      router.push("/SignIn");
+      // Auto sign-in with the same credentials so user doesn't have to log in again
+      const { error: signInError } = await signIn.email({
+        email: formData.get("email") as string,
+        password,
+      });
+
+      setIsLoading(false);
+
+      if (signInError) {
+        toast.success("Account created! Please sign in.");
+        router.push("/SignIn");
+        return;
+      }
+
+      toast.success("Account created successfully! Welcome to MentorLagbe.");
+      router.push("/");
     }
   };
 

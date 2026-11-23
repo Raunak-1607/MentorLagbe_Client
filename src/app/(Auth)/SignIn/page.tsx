@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "@heroui/react";
 
@@ -18,6 +18,26 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
+
+  // If the user is already logged in, redirect them to their dashboard immediately
+  useEffect(() => {
+    if (isPending) return;
+    if (!session) return;
+
+    const callbackUrl =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("callbackUrl")
+        : null;
+
+    const role = session.user.role;
+    const dest =
+      role === "tutor" || role === "admin"
+        ? dashboardPath[role]
+        : dashboardPath.student;
+
+    router.replace(callbackUrl || dest);
+  }, [isPending, session, router]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
