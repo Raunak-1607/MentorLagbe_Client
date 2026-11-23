@@ -61,7 +61,9 @@ export default function SignInPage() {
 
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: callbackUrl || "/dashboard",
+      // /onboarding auto-skips to dashboard if they already completed onboarding.
+      // This handles both new users (need role pick) and returning users (redirected immediately).
+      callbackURL: callbackUrl || "/onboarding",
     });
     setIsGoogleLoading(false);
   };

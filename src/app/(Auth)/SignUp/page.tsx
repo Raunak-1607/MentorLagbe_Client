@@ -46,7 +46,9 @@ export default function SignUpPage() {
     setIsGoogleLoading(true);
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/dashboard",
+      // New Google users go to /onboarding to pick their role & phone number.
+      // /onboarding auto-skips to dashboard if they already completed onboarding.
+      callbackURL: "/onboarding",
     });
     setIsGoogleLoading(false);
   };
