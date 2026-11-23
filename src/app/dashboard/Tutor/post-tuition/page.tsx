@@ -4,6 +4,7 @@ import { toast } from "@heroui/react/toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getTokenByClient } from "@/lib/GetTokenClient";
+import { uploadToImgBB } from "@/lib/upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,31 @@ import type { CreateTuition } from "@/types/tuition";
 export default function PostTuitionPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bannerImageUrl, setBannerImageUrl] = useState("");
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.danger("Please select an image file (PNG, JPG, etc.).");
+      return;
+    }
+
+    try {
+      setUploadingBanner(true);
+      const url = await uploadToImgBB(file);
+      setBannerImageUrl(url);
+      toast.success("Banner image uploaded to ImgBB successfully!");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Banner upload failed";
+      toast.danger(msg);
+    } finally {
+      setUploadingBanner(false);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -33,7 +59,7 @@ export default function PostTuitionPage() {
       location: String(formData.get("location")),
       monthlyFee: Number(formData.get("monthlyFee")),
       daysPerWeek: Number(formData.get("daysPerWeek")),
-      bannerImage: String(formData.get("bannerImage") || ""),
+      bannerImage: bannerImageUrl || String(formData.get("bannerImage") || ""),
       description: String(formData.get("description")),
     };
 
@@ -153,9 +179,55 @@ export default function PostTuitionPage() {
             <Input id="daysPerWeek" name="daysPerWeek" type="number" min="1" max="7" placeholder="1 to 7" required />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="bannerImage">Banner image URL <span className="font-normal text-muted-foreground">(optional)</span></Label>
-            <Input id="bannerImage" name="bannerImage" type="url" placeholder="https://example.com/banner.jpg" />
+          <div className="space-y-2 md:col-span-2">
+            <Label>Banner image <span className="font-normal text-muted-foreground">(Direct upload via ImgBB)</span></Label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <label className="flex h-20 w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-input bg-muted/20 px-4 text-center text-sm transition hover:border-indigo-400 hover:bg-indigo-50/20">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleBannerUpload}
+                  disabled={uploadingBanner}
+                  className="hidden"
+                />
+                {uploadingBanner ? (
+                  <span className="flex items-center gap-2 text-indigo-600 font-medium">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Uploading banner to ImgBB...
+                  </span>
+                ) : bannerImageUrl ? (
+                  <span className="text-emerald-600 font-medium text-xs sm:text-sm truncate">
+                    ✓ Image uploaded. Click to choose a different photo
+                  </span>
+                ) : (
+                  <div className="space-y-1">
+                    <p className="font-medium text-gray-700">
+                      <span className="text-indigo-600">Click to upload banner image</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">PNG, JPG, WEBP via ImgBB</p>
+                  </div>
+                )}
+              </label>
+
+              {bannerImageUrl && (
+                <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-xl border bg-muted shadow-xs">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={bannerImageUrl} alt="Banner preview" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setBannerImageUrl("")}
+                    className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 text-xs"
+                    title="Remove"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
+            <input type="hidden" name="bannerImage" value={bannerImageUrl} />
           </div>
         </div>
 
@@ -170,8 +242,8 @@ export default function PostTuitionPage() {
           />
         </div>
 
-        <Button type="submit" disabled={isSubmitting} className="mt-6 h-11 bg-indigo-600 px-6 hover:bg-indigo-700">
-          {isSubmitting ? "Submitting..." : "Submit for approval"}
+        <Button type="submit" disabled={isSubmitting || uploadingBanner} className="mt-6 h-11 bg-indigo-600 px-6 hover:bg-indigo-700">
+          {isSubmitting ? "Submitting..." : uploadingBanner ? "Uploading banner..." : "Submit for approval"}
         </Button>
       </form>
     </section>
